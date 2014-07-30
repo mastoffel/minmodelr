@@ -1,0 +1,9 @@
+Package: minmodelr
+Title: Minimal adequate models and single variable deletion testings
+Version: 0.1
+Author: "Martin A. Stoffel <martin.adam.stoffel@gmail.com> [aut, cre]"
+Description: Uses deletion testing to find the minimal adequate model
+Depends:
+    R (>= 3.1.1)
+License: GNU
+LazyData: true
