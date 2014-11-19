@@ -2,7 +2,7 @@
 #' 
 #' Takes in a data frame and computes the minimal adequate model
 #' 
-#' @param df A data frame with the dependent variable in the first column and the independent variables in the following columns
+#' @param yx A data frame with the dependent variable in the first column and the independent variables in the following columns
 #' @param test "F" or "Chisq" for deletion testing and model comparison
 #' @param family glm family
 #' @return Returns a list consisting of
@@ -14,14 +14,10 @@
 
 
 
-MinMod <- function(df, test = "F", family = gaussian) {
-        ## GLM deletion testing function to get the most parsimonous model, and output results
-        ## data frame format: dependent variable in the first column and independent variables in the other columns
-        ## test is "Chisq" or "F"
-        
+MinMod <- function(yx, test = "F", family = gaussian) {
+
         stopdeleting <- FALSE
-        
-        ## get df with indpendent vars
+        # get df with indpendent vars
         dfBase <- subset(df, select = 2:ncol(df))
         
         ## get vector with dependent var
@@ -44,26 +40,20 @@ MinMod <- function(df, test = "F", family = gaussian) {
                 
                 # number of variables
                 numVars <- ncol(dfBase)
-                
                 # model1
                 model1 <- glm(depVar ~., data = dfBase, family = family)
-                
                 # create pvalue vector
                 pvalues <- vector()
-                
                 ## delete every variable, make comparison and take the least significant out
                 for (i in 1:ncol(dfBase)) {
                         
                         # Remove var
                         del <- i
-                        dfTemp <- dfBase[, -del]
-                        
+                        dfTemp <- dfBase[-del]
                         # compute glm
                         model2 <- glm(depVar ~., data = dfTemp, family = family)
-                        
                         # ANOVA for model comparison
                         modelCompare <- anova(model1, model2, test = test)
-                        
                         # get p values in vector
                         pvalues[i] <- modelCompare[2, indat]
                         
@@ -73,23 +63,21 @@ MinMod <- function(df, test = "F", family = gaussian) {
                 
                 # stop if deleting variable with highest p value leads to a significant different model
                 
-        
+                
                 if (pvalues[remove] <= 0.05){
                         stopdeleting  <- TRUE
                         bestmodeldf <- dfBase
                         
-                # stop if just one variable left in dfTemp
+                        # stop if just one variable left in dfTemp
                 } else if ((pvalues[remove] > 0.05) & ((numVars)==2)){
                         stopdeleting <- TRUE
                         bestmodeldf <- subset(dfBase, select = -remove)
                         
-                # go on with removed variable
+                        # go on with removed variable
                 } else {
                         dfBase <- dfBase[, -remove]
                 }
-                
-                
-                
+                 
         }
         
         bestmodel <- glm(depVar ~., data = bestmodeldf, family = family)

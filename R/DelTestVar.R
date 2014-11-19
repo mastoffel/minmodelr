@@ -4,21 +4,20 @@
 #' against the reduced model with F-tests and Chisquared-tests. Explained deviance per variable is computed by substracting 
 #' the explained deviance from the reduced model (by ne variable) from the deviance explained by the full model.
 #' 
-#' @param df A data frame with the dependent variable in the first column and the independent variables in the following columns
+#' @param yx A data frame with the dependent variable in the first column and the independent variables in the following columns
 #' @param family Specifies glm type (e.g. "gaussian","binomial")
-#' @param writecsv If TRUE, writes the output in a csv file
-#' @param filename Filename of the csv output file
+#' 
 #' @return Data frame with estimates, explained deviance, F-value, p-value (F-test), p-value (Chisq-test) per variable. 
 #' 
 #' @export
 
 
-DelTestVar <- function(df, family = "gaussian", writecsv = FALSE, filename = "DelTestVars.csv") {
+DelTestVar <- function(yx, family = "gaussian") {
         
         
         # define Base data and Full Model
         dfBase <- df
-        FullModel <- glm(dfBase[, 1] ~., data = dfBase[, 2:ncol(dfBase)], family = family)
+        FullModel <- glm(dfBase[, 1] ~., data = dfBase[2:ncol(dfBase)], family = family)
         devExplFull <- (FullModel$null.deviance - FullModel$deviance)/FullModel$null.deviance
         
         ## define data frame
@@ -30,12 +29,16 @@ DelTestVar <- function(df, family = "gaussian", writecsv = FALSE, filename = "De
                 
                 # Remove var
                 del <- i
-                dftemp <- dfBase[, -del]
+                dftemp <- dfBase[-del]
                 
                 numVars <- ncol(dftemp)
+                
+                if (numVars == 1) {
+                        modeltemp <- glm(dfBase[, 1] ~ 1, family = family)      
+                } else {
                 # compute glm
                 modeltemp <- glm(dfBase[, 1] ~., data = subset(dftemp, select = 2:(numVars)), family = family)
-                
+                }
                 # ANOVA for model comparison
                 modelCompareF <- anova(FullModel, modeltemp, test = "F")
                 modelCompareChi <- anova(FullModel, modeltemp, test = "Chisq")
@@ -45,16 +48,13 @@ DelTestVar <- function(df, family = "gaussian", writecsv = FALSE, filename = "De
                 devExplVar <- devExplFull - devExpltemp
                 
                 # fill in values
-                ValuesDf$DevianceExplained[i] <- devExplVar
+                ValuesDf$DevianceExplained[i] <- devExplVar*100
                 ValuesDf$Fval[i] <- modelCompareF[2, 5]
                 ValuesDf$Ftest_Pval[i] <- modelCompareF[2, 6]
                 ValuesDf$Chitest_Pval[i] <- modelCompareChi[2, 5]
         }
         
         names(ValuesDf) <- c("Estimate","Deviance Explained", "F", "P (F-test)", "P (Chisquared-test)")
-        
-        if (writecsv == TRUE) {
-                write.csv(ValuesDf, filename)
-        }
+        print(ValuesDF)
         Out <- ValuesDf
 }
