@@ -4,7 +4,7 @@
 #' against the reduced model with F-tests and Chisquared-tests. Explained deviance per variable is computed by substracting 
 #' the explained deviance from the reduced model (by ne variable) from the deviance explained by the full model.
 #' 
-#' @param yx A data frame with the dependent variable in the first column and the independent variables in the following columns
+#' @param yX A data frame with the dependent variable in the first column and the independent variables in the following columns
 #' @param family Specifies glm type (e.g. "gaussian","binomial")
 #' 
 #' @return Data frame with estimates, explained deviance, F-value, p-value (F-test), p-value (Chisq-test) per variable. 
@@ -12,11 +12,11 @@
 #' @export
 
 
-DelTestVar <- function(yx, family = "gaussian") {
+DelTestVar <- function(yX, family = "gaussian") {
         
         
         # define Base data and Full Model
-        dfBase <- df
+        dfBase <- yX
         FullModel <- glm(dfBase[, 1] ~., data = dfBase[2:ncol(dfBase)], family = family)
         devExplFull <- (FullModel$null.deviance - FullModel$deviance)/FullModel$null.deviance
         
@@ -55,6 +55,6 @@ DelTestVar <- function(yx, family = "gaussian") {
         }
         
         names(ValuesDf) <- c("Estimate","Deviance Explained", "F", "P (F-test)", "P (Chisquared-test)")
-        print(ValuesDF)
+        print(ValuesDf)
         Out <- ValuesDf
 }

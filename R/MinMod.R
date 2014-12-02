@@ -2,7 +2,7 @@
 #' 
 #' Takes in a data frame and computes the minimal adequate model
 #' 
-#' @param yx A data frame with the dependent variable in the first column and the independent variables in the following columns
+#' @param yX A data frame with the dependent variable in the first column and the independent variables in the following columns
 #' @param test "F" or "Chisq" for deletion testing and model comparison
 #' @param family glm family
 #' @return Returns a list consisting of
@@ -14,14 +14,14 @@
 
 
 
-MinMod <- function(yx, test = "F", family = gaussian) {
+MinMod <- function(yX, test = "F", family = gaussian) {
 
         stopdeleting <- FALSE
         # get df with indpendent vars
-        dfBase <- subset(df, select = 2:ncol(df))
+        dfBase <- subset(yX, select = 2:ncol(yX))
         
         ## get vector with dependent var
-        depVar <- df[, 1]
+        depVar <- yX[, 1]
         names(depVar) <- names(dfBase)[1]
         
         ## which test is used

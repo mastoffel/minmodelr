@@ -3,10 +3,10 @@
 \alias{MinMod}
 \title{Finds the minimal adequate model}
 \usage{
-MinMod(yx, test = "F", family = gaussian)
+MinMod(yX, test = "F", family = gaussian)
 }
 \arguments{
-\item{yx}{A data frame with the dependent variable in the first column and the independent variables in the following columns}
+\item{yX}{A data frame with the dependent variable in the first column and the independent variables in the following columns}
 
 \item{test}{"F" or "Chisq" for deletion testing and model comparison}
 

@@ -3,10 +3,10 @@
 \alias{DelTestVar}
 \title{Single variable deletion testing}
 \usage{
-DelTestVar(yx, family = "gaussian")
+DelTestVar(yX, family = "gaussian")
 }
 \arguments{
-\item{yx}{A data frame with the dependent variable in the first column and the independent variables in the following columns}
+\item{yX}{A data frame with the dependent variable in the first column and the independent variables in the following columns}
 
 \item{family}{Specifies glm type (e.g. "gaussian","binomial")}
 }
