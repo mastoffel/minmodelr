@@ -21,9 +21,17 @@ DelTestVar <- function(yX, family = "gaussian") {
         devExplFull <- (FullModel$null.deviance - FullModel$deviance)/FullModel$null.deviance
         
         ## define data frame
-        ValuesDf <- data.frame("estimate" = FullModel$coefficients, "DevianceExplained" = NA,
-                               "Fval" = NA, "Ftest_Pval" = NA, "Chitest_Pval" = NA)
-      
+        if (sum(sapply(yX, is.factor) > 0)) { # if factors in the data frame
+                ValuesDf <- data.frame(matrix(data=NA, nrow = ncol(yX), ncol = 5))
+                names(ValuesDf) <- c("estimate", "DevianceExplained",
+                               "Fval", "Ftest_Pval", "Chitest_Pval")
+                rownames(ValuesDf) <- names(yX)
+                
+        } else {
+                ValuesDf <- data.frame("estimate" = FullModel$coefficients, "DevianceExplained" = NA,
+                                       "Fval" = NA, "Ftest_Pval" = NA, "Chitest_Pval" = NA)    
+        }
+        
         
         for (i in 2:ncol(dfBase)) {
                 
@@ -39,7 +47,7 @@ DelTestVar <- function(yX, family = "gaussian") {
                 # compute glm
                 modeltemp <- glm(dfBase[, 1] ~., data = subset(dftemp, select = 2:(numVars)), family = family)
                 }
-                # ANOVA for model comparison
+                # likelihood ratio test 
                 modelCompareF <- anova(FullModel, modeltemp, test = "F")
                 modelCompareChi <- anova(FullModel, modeltemp, test = "Chisq")
                 
